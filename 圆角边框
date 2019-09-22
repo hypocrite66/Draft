@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Test</title>
+	<style>
+	.nav{
+		text-align: center;
+		
+	}
+	.nav a{
+		display: inline-block;
+		color: #fe007f;
+		background-color: #fff;  
+		width: 172px;
+		height: 172px;
+		text-decoration: none;
+		font-weight: 700;
+		font-size: 20px;
+		text-align: center;
+		line-height: 172px;
+		margin: 30px;
+		/* padding: 30px; */
+		border-radius: 50%;
+	}
+	.nav a:hover{
+		background-color: #fe007f;
+		color: #fff;
+	}
+	</style>
+</head>
+<body>
+	<div class="nav">
+	<a href="#">百 度</a>
+	<a href="#">阿 里</a>
+	<a href="#">腾 讯</a>
+	<a href="#">京 东</a>
+	</div>
+</body>
+</html>
