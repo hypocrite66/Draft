@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+	<style type="text/css" media="screen">
+		*{
+			padding: 0;
+			margin: 0
+		}
+		div{
+			margin-top: 3rem;
+			width: 15rem;
+			height: 10rem;
+			background-color: #fe007f;
+		}	
+	</style>
+</head>
+<body>
+	<script type="text/javascript" src="common.js"></script>
+	<input type="button" name="#" value="移动到400px" id="btn1">
+	<input type="button" name="#" value="移动到900px" id="btn2">
+	<input type="button" name="#" value="还原" id="btn3">
+	<div id="dv">
+		我是个盒子	
+	</div>
+	<script type="text/javascript">
+		//变速动画函数
+		var changeSpeedMove = function(element,targetPosition,time){
+			//清楚原来的定时器
+			window.clearInterval(element.timeId);
+			//先让当前元素变为绝对定位
+			element.style.position="absolute";
+			var move = function(){
+				//获取元素的当前位置
+				var currentPosition = element.offsetLeft;
+				//根据公式计算当前的步长
+				var step = (targetPosition-currentPosition)/10;
+				//判断步长的取上或取下
+				step = currentPosition<targetPosition?Math.ceil(step):Math.floor(step);
+				//移动
+				element.style.left = currentPosition+step+"px";
+				//到达终点清除定时器
+				if(currentPosition===targetPosition){
+					window.clearInterval(element.timeId);
+				}
+			};
+			//在时间内调用定时器
+			element.timeId=window.setInterval(move,time);
+		};
+		//获取所有的变量
+		var btn1 = document.getElementById("btn1");
+		var btn2 = document.getElementById("btn2");
+		var btn3 = document.getElementById("btn3");
+		var dv = document.getElementById("dv");
+		btn1.onclick=function(){
+			changeSpeedMoveToXPosition(dv,"400",20);
+		};
+		btn2.onclick = function(){
+			changeSpeedMoveToXPosition(dv,"900",9);
+		};
+		btn3.onclick=function(){
+			changeSpeedMoveToXPosition(dv,"0",20);
+		};
+	</script>
+</body>
+</html>
