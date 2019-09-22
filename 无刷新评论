@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <table id="tb" border="1">
+        <tbody id="tbd">
+            <tr>
+                <td>猪猪:</td>
+                <td>我喜欢吃肉</td>
+            </tr>
+        </tbody>
+    </table>
+    <div>
+        昵称:<input type="text" value="" id="userName" /><br />
+        <textarea name="" id="tt" cols="30" rows="10"></textarea><br />
+        <input type="button" value="评论一下" id="btn" /><br />
+    </div>
+
+</body>
+<script>
+    //get Elem
+    let name = document.getElementById("userName");
+    let text = document.getElementById("tt");
+    let btn = document.getElementById("btn");
+    let tBody = document.getElementById("tbd");
+    //handle
+    btn.onclick = function () {
+        //new elem
+        var newTr = document.createElement('tr');
+        var newTd1 = document.createElement("td");
+        var newTd2 = document.createElement("td");
+        //give value
+        newTd1.innerText = name.value + ":";
+        newTd2.innerText = text.value;
+        //insert
+        tBody.appendChild(newTr);
+        tBody.appendChild(newTd1);
+        tBody.appendChild(newTd2);
+        //initial
+        name.value = "";
+        text.value = "";
+    };
+</script>
+
+</html>
