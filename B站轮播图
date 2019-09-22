@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+	<style type="text/css">
+		*{
+			box-sizing: border-box;
+			padding: 0;
+			margin: 0;
+			text-decoration: none;
+			list-style: none;
+		}
+		.changePic{
+			width: 55rem; 
+			min-height: 27rem; 
+			margin: 15rem auto;
+			border: 0.0625rem solid black;
+			 overflow: hidden;     
+			position: relative;
+		}
+		.pic{
+			width: 800%;
+		}
+		.pic li{
+			float: left;
+		}
+		.key{
+			width:100%; 
+			min-height: 100%;
+			display: none; 
+			/* z-index: 3;  */
+			position: absolute; 
+			top: 0;
+			left: 0;
+		}
+
+		/* ！！！注意这里，一开始.key下的盒子是空的 */
+		.changePic:hover .key{
+			display: block; 
+		}
+
+		.key .left{
+			position: absolute;
+			/* z-index: 3; */
+			width: 1.5rem;
+			min-height: 1.5rem; 
+			cursor: pointer;
+			border-radius: 50%;
+			background-color:#fff;
+			left: 3%;
+			top: 50%;
+		}
+		
+		.key .right{
+			/* z-index: 3; */
+			position: absolute;
+			width: 1.5rem;
+			min-height: 1.5rem; 
+			cursor: pointer;
+			border-radius: 50%;
+			background-color:#fff;
+			right: 3%;
+			top: 50%;
+		}
+		.right:hover{
+			background: #00a4db;
+			/* border: 0.75rem solid #fff; */
+		}
+		.left:hover{
+			background: #00a4db;
+			/* border: 0.75rem solid #fff; */
+		}
+
+	</style>
+</head>
+<body>
+	<figure class="changePic">
+		<ul class="pic">
+			<li>
+				<a href="#"><img src="../images/12044aab56044fcbce9ead890c7cbfd79de08b03.jpg@880w_440h.jpg" alt="#"> 
+				</a>
+			</li>
+			<li>
+				<a href="#"><img src="../images/64e1d8952e3cd2c935c42fb17a7f3eb34ce748f5.jpg@880w_440h.webp.jpg" alt="#"> 
+				</a>
+			</li>
+			<li>
+				<a href="#"><img src="../images/4042b2c80676785bdbd571f333398fbf.jpg@880w_440h.webp.jpg" alt="#"> 
+				</a>
+			</li>
+			<li>
+				<a href="#"><img src="../images/e6df67f53094ca7f91aaf7d293f41221.jpg@880w_440h.jpg" alt="#"> 
+				</a>
+			</li>
+			<li>
+				<a href="#"><img src="../images/635836462158aaab95aca9f590cef555f443322b.jpg@880w_440h.webp.jpg" alt="#"> 
+				</a>
+			</li>
+		</ul>
+		<section class="key">
+			<span class="left"></span>
+			<span class="right"></span>
+		</section>
+	</figure>
+	<script type="text/javascript">
+		//获取changePicDom元素
+		var changePic_obj=document.querySelector(".changePic");
+		//获取ulDOM元素
+		var ul_obj = document.querySelector(".pic");
+		//获取点击左按钮DOM元素
+		var spanLeft_obj = document.querySelector(".left");
+		//获取点击左按钮DOM元素
+		var spanRight_obj = document.querySelector(".right");
+	/*	//为五个li标签注册自定义属性
+			for(var i=0;i<ul_obj.children.length;i++){
+					ul_obj.children[i].setAttribute("index",i);
+			}*/
+		//为两个按钮对象耦合属性
+		spanLeft_obj.index=1;
+		spanRight_obj.index=ul_obj.children.length;
+		//右移动画函数
+		var buttonToRight = function(){
+			//初始化
+			window.clearInterval(spanRight_obj.timeId);
+			console.log(spanRight_obj.timeId);
+			var firstPosition = ul_obj.offsetLeft;
+			//获取边框的宽度
+			var changePic_width=changePic_obj.offsetWidth;
+			if(spanRight_obj.index===1){
+				return false;
+			}
+			else{
+				//改为绝对定位
+				ul_obj.style.position="absolute";
+				//步速
+				var step=20;
+				//记录走过的路程
+				var currentWay=20;
+				var moveRight=function(){
+					//获取元素当前的位置
+					var currentPosition = ul_obj.offsetLeft;
+					//记录走过的路程
+					currentWay=currentWay+step;
+					//移动
+					ul_obj.style.left=currentPosition-20+"px";
+					//如果小于20px,直接到终点
+					if(changePic_width-currentWay<20){
+						ul_obj.style.left=firstPosition-changePic_width+"px";
+						window.clearInterval(spanRight_obj.timeId);
+					}
+				}
+				spanRight_obj.timeId=window.setInterval(moveRight,6)
+			}
+			spanRight_obj.index--;
+			spanLeft_obj.index++;
+		};
+		//左移动画函数
+		var buttonToLeft = function(){
+			//初始化
+			window.clearInterval(spanLeft_obj.timeId);
+			console.log(spanRight_obj.timeId);
+			var firstPosition = ul_obj.offsetLeft;
+			//获取边框的宽度
+			var changePic_width=changePic_obj.offsetWidth;
+			if(spanLeft_obj.index===1){
+				return false;
+			}
+			else{
+				//改为绝对定位
+				ul_obj.style.position="absolute";
+				//步速
+				var step=20;
+				//记录走过的路程
+				var currentWay=20;
+				var moveLeft=function(){
+					//获取元素当前的位置
+					var currentPosition = ul_obj.offsetLeft;
+					//记录走过的路程
+					currentWay=currentWay+step;
+					//移动
+					ul_obj.style.left=currentPosition+20+"px";
+					//如果小于20px,直接到终点
+					if(changePic_width-currentWay<20){
+						ul_obj.style.left=firstPosition+changePic_width+"px";
+						window.clearInterval(spanLeft_obj.timeId);
+					}
+				}
+				spanLeft_obj.timeId=window.setInterval(moveLeft,6)
+			}
+			spanLeft_obj.index--;
+			spanRight_obj.index++;
+		};
+		//为两个按钮注册点击事件
+		spanLeft_obj.addEventListener("click",buttonToLeft,false)
+		spanRight_obj.addEventListener("click",buttonToRight,false)
+	</script>
+</body>
+</html>
