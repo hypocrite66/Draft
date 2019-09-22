@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo</title>
+    <style>
+        .map {
+            width: 800px;
+            height: 800px;
+            background-color: #fe007f;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="map"></div>
+    <script>
+        //dom
+        var map = document.querySelector(".map");
+        //get random number
+        var getRandomNumber = function (min, max) {
+            //max++;
+            return Math.floor(Math.random() * (max - min) + min);
+        };
+        //console.log(getRandomNumber(1,5));
+        //item oop give:string
+        function item(color) {
+            //square
+            this.width = 20;
+            this.height = 20;
+            this.x = 0;
+            this.y = 0;
+            //this.color = color;
+            this.element = document.createElement("div");
+            this.element.style.position = "absolute";
+            this.element.style.backgroundColor = color;
+            this.element.style.width = this.width + "px";
+            this.element.style.height = this.height + "px";
+        }
+        //give:number
+        item.prototype.getRandomNumber = getRandomNumber;
+        //give:DOM elem
+        item.prototype.initialize = function (bgDOM) {
+            //calculate cordinate
+            let bgWidth = bgDOM.offsetWidth;
+            let bgheight = bgDOM.offsetHeight;
+            let scopeX = Math.floor(bgWidth / this.width);
+            let scopeY = Math.floor(bgheight / this.height);
+            //console.log(scopeX,scopeY);
+            //get cordinate
+            this.x = this.getRandomNumber(0, scopeX);
+            this.y = this.getRandomNumber(0, scopeY);
+            //set
+            this.element.style.left = this.x * this.width + "px";
+            this.element.style.top = this.y * this.height + "px";
+            bgDOM.appendChild(this.element);
+        };
+        //delete
+        item.prototype.delete = function () {
+            var that = this;
+            this.element.parentNode.removeChild(that.element);
+            console.log(this);
+        };
+        //food.initialize(map);
+
+        //snake constructor
+        //give:string number
+        function Snake(color, length) {
+            this.length = length;
+            this.color = color;
+            this.direction = "right";
+            this.snakeHead = document.createElement("div");
+            this.snakeHead.style.backgroundColor = "green";
+            this.snakeHead.style.height = "20px";
+            this.snakeHead.style.width = "20px";
+            this.snakeHead.style.position = "absolute";
+            this.snakeBody = [];
+            for (let i = 0; i < this.length; i++) {
+                this.snakeBody.push(document.createElement("div"));
+                this.snakeBody[i].style.backgroundColor = color;
+                this.snakeBody[i].style.width = "20px";
+                this.snakeBody[i].style.height = "20px";
+                this.snakeBody[i].style.position = "absolute";
+            }
+        }
+
+        //give:DOM elem
+        Snake.prototype.delete = function (bgDOM) {
+            bgDOM.removeChild(this.snakeHead);
+            for (let i = 0; i < this.length; i++) {
+                bgDOM.removeChild(this.snakeBody[i]);
+            }
+        };
+
+        //give:DOM elem,timeID
+        Snake.prototype.judge = function (bgDOM, timeId) {
+            //console.log(parseInt(this.snakeHead.style.left));
+            //console.log(parseInt(bgDOM.offsetWidth));
+            var scopeX = parseInt(bgDOM.offsetWidth);
+            var scopeY = parseInt(bgDOM.offsetHeight);
+            var currentX = parseInt(this.snakeHead.style.left);
+            var currentY = parseInt(this.snakeHead.style.top);
+            if (currentX >= scopeX || currentX <= 0) {
+                //this.snakeHead.style.left = parseInt(bgDOM.offsetWidth) + "px";
+                this.delete(bgDOM);
+                window.clearInterval(timeId);
+                alert("撞到墙了，游戏结束。");
+            } else if (currentY >= scopeY || currentY <= 0) {
+                this.delete(bgDOM);
+                window.clearInterval(timeId);
+                //this.snakeHead.style.top = parseInt(bgDOM.offsetHeight) + "px";
+                alert("撞到墙了，游戏结束。");
+            }
+        };
+
+        //give:DOM elem    
+        Snake.prototype.initialize = function (bgDOM) {
+            this.snakeHead.style.left = (this.length + 3) * 20 + "px";
+            this.snakeHead.style.top = "60px";
+            bgDOM.appendChild(this.snakeHead);
+            for (let i = 0; i < this.length; i++) {
+                this.snakeBody[i].style.left = (this.length - i + 2) * 20 + "px";
+                this.snakeBody[i].style.top = "60px";
+                bgDOM.appendChild(this.snakeBody[i]);
+            }
+        };
+
+        //give:DOM elem,string
+        Snake.prototype.move = function (bgDOM, food) {
+            //this.judge(bgDOM);
+            let currentPositionX = parseInt(this.snakeHead.style.left);
+            let currentPositionY = parseInt(this.snakeHead.style.top);
+            this.eat(bgDOM, food);
+            switch (this.direction) {
+                case "right":
+                    //console.log(currentPositionX);
+                    this.snakeHead.style.left = currentPositionX + 20 + "px";
+                    for (let i = 0; i < this.length; i++) {
+                        if (i === 0) {
+                            var targetPositionX = parseInt(this.snakeBody[i].style.left);
+                            var targetPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = currentPositionX + "px";
+                            this.snakeBody[i].style.top = currentPositionY + "px";
+                        } else {
+                            var previousPositionX = parseInt(this.snakeBody[i].style.left);
+                            var previousPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = targetPositionX + "px";
+                            this.snakeBody[i].style.top = targetPositionY + "px";
+                            targetPositionX = previousPositionX;
+                            targetPositionY = previousPositionY;
+                        }
+                    }
+                    break;
+                case "left":
+                    this.snakeHead.style.left = currentPositionX - 20 + "px";
+                    for (let i = 0; i < this.length; i++) {
+                        if (i === 0) {
+                            var targetPositionX = parseInt(this.snakeBody[i].style.left);
+                            var targetPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = currentPositionX + "px";
+                            this.snakeBody[i].style.top = currentPositionY + "px";
+                        } else {
+                            var previousPositionX = parseInt(this.snakeBody[i].style.left);
+                            var previousPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = targetPositionX + "px";
+                            this.snakeBody[i].style.top = targetPositionY + "px";
+                            targetPositionX = previousPositionX;
+                            targetPositionY = previousPositionY;
+                        }
+                    }
+                    break;
+                case "up":
+                    this.snakeHead.style.top = currentPositionY - 20 + "px";
+                    for (let i = 0; i < this.length; i++) {
+                        if (i === 0) {
+                            var targetPositionX = parseInt(this.snakeBody[i].style.left);
+                            var targetPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = currentPositionX + "px";
+                            this.snakeBody[i].style.top = currentPositionY + "px";
+                        } else {
+                            var previousPositionX = parseInt(this.snakeBody[i].style.left);
+                            var previousPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = targetPositionX + "px";
+                            this.snakeBody[i].style.top = targetPositionY + "px";
+                            targetPositionX = previousPositionX;
+                            targetPositionY = previousPositionY;
+                        }
+                    }
+                    break;
+                case "down":
+                    this.snakeHead.style.top = currentPositionY + 20 + "px";
+                    for (let i = 0; i < this.length; i++) {
+                        if (i === 0) {
+                            var targetPositionX = parseInt(this.snakeBody[i].style.left);
+                            var targetPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = currentPositionX + "px";
+                            this.snakeBody[i].style.top = currentPositionY + "px";
+                        } else {
+                            var previousPositionX = parseInt(this.snakeBody[i].style.left);
+                            var previousPositionY = parseInt(this.snakeBody[i].style.top);
+                            this.snakeBody[i].style.left = targetPositionX + "px";
+                            this.snakeBody[i].style.top = targetPositionY + "px";
+                            targetPositionX = previousPositionX;
+                            targetPositionY = previousPositionY;
+                        }
+                    }
+                    break;
+            }
+        };
+
+        //give DOM elem,itemObj
+        Snake.prototype.eat = function (bgDOM, food) {
+            let foodX = parseInt(food.element.style.left);
+            let foodY = parseInt(food.element.style.top);
+            let snakeX = parseInt(this.snakeHead.style.left);
+            let snakeY = parseInt(this.snakeHead.style.top);
+            //let snake = this;
+            if (foodX === snakeX && foodY === snakeY) {
+                food.delete();
+                food.initialize(bgDOM);
+                let newPart = document.createElement("div");
+                newPart.style.backgroundColor = this.color;
+                newPart.style.width = "20px";
+                newPart.style.height = "20px";
+                newPart.style.position = "absolute";
+                newPart.style.top = parseInt(this.snakeBody[this.length - 1].style.top) + "px";
+                newPart.style.left = parseInt(this.snakeBody[this.length - 1].style.left) - 20 + "px";
+                this.snakeBody.push(newPart);
+                bgDOM.appendChild(newPart);
+                this.length++;
+                console.log(this);
+
+            }
+
+        };
+
+        function Gamer(bgDOM, food, snake) {
+            this.map = bgDOM;
+            this.food = food;
+            this.snake = snake;
+        }
+
+        Gamer.prototype.test = function () {
+            console.dir(this.snake);
+            console.dir(this.food);
+            console.log(this.map);
+        };
+
+        Gamer.prototype.operate = function () {
+            var tempGamer = this;
+            var func = function (event) {
+                switch (event.keyCode) {
+                    case 87:
+                        tempGamer.snake.direction = "up";
+                        break;
+                    case 83:
+                        tempGamer.snake.direction = "down";
+                        break;
+                    case 65:
+                        tempGamer.snake.direction = "left";
+                        break;
+                    case 68:
+                        tempGamer.snake.direction = "right";
+                        break;
+                }
+            };
+            document.addEventListener("keydown", func, false);
+        };
+
+        Gamer.prototype.play = function () {
+            this.food.initialize(this.map);
+            this.snake.initialize(this.map);
+            var tempGamer = this;
+            var func = function () {
+                //console.log(this);
+                tempGamer.operate();
+                tempGamer.snake.judge(tempGamer.map, ID);
+                tempGamer.snake.move(tempGamer.map, tempGamer.food);
+            };
+            var ID = window.setInterval(func, 100);
+        };
+
+        //test.initialize(map);
+        var food1 = new item("orange");
+        var snake1 = new Snake("skyblue", 3);
+        //console.log(snake1.snakeHead);
+        //console.dir(snake1);
+        var player1 = new Gamer(map, food1, snake1);
+        player1.play();
+    </script>
+
+</body>
+
+</html>
