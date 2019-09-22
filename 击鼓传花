@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo</title>
+</head>
+<body>
+    <script>
+        //队列类属性构建
+        function Line(){
+            this._elements = new Object();
+            this._headIndex = 0;
+            this._tailIndex = 0;
+        }
+        //队列类方法构建
+        Line.prototype.isEmpty = function(){
+            return(this._tailIndex-this._headIndex===0);
+        };
+        Line.prototype.length = function(){
+            return(this._tailIndex-this._headIndex);
+        };
+        Line.prototype.addLine = function(element){
+           this._elements[this._tailIndex] = element;
+           this._tailIndex++;            
+        };
+        Line.prototype.removeLine = function(){
+            if(this.isEmpty()){
+                return false;
+            }else{
+                let key = this._elements[this._headIndex];
+                delete this._elements[this._headIndex];
+                this._headIndex++;
+                return key;
+            }
+        };
+        //击鼓传花函数
+        function hotPotato(elements,num){
+            let queue = new Line();
+            //全部入队
+            for(let i=0;i<elements.length;i++){
+                queue.addLine(elements[i]);
+            }
+            while(queue.length()>1){
+                //出队的同时入队，实现模拟环形队列。
+                for(let i=0;i<num;i++){
+                    queue.addLine(queue.removeLine());
+                }
+                console.log(`真不幸呀，这位${queue.removeLine()}小朋友出局了!`);
+            }
+            console.log(`恭喜！最后的胜利者是${queue.removeLine()}！`);
+            if(queue.isEmpty()){
+                console.log(`游戏结束`);
+            }else{
+                return false;
+            }
+        }
+
+        //测试
+       let children = ["小明","小红","潇洒哥","杰哥","Mary","Dante"];
+       hotPotato(children,10);
+
+    </script>
+</body>
+</html>
